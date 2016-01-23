@@ -1,5 +1,6 @@
 import tensorflow as tf
 from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 
 
@@ -20,13 +21,16 @@ def import_data(train_path, test_path, target, na_values=None):
     return df_all
 
 
-def value_counts(df):
+def value_counts(df, look_for=None):
     for col in df.columns:
         print(col)
         vals = df[col].value_counts(normalize=True, dropna=False).reset_index()
         print(vals)
         print()
-        print(vals[vals['index'].isnull()])
+        if look_for == None:
+            print(vals[vals['index'].isnull()])
+        else:
+            print(vals[vals['index'] == look_for])
         print('-------------------------------------')
 
 
@@ -35,14 +39,17 @@ class Used_features():
     def __init__(self, target):
         self.target = target
 
-    def fit_transform(self, df):
-        self.columns_Y = [col for col in df.columns if len(df[col].unique()) >= 2]
+    def fit_transform(self, df, except_cols=None):
+        self.columns_Y = [col for col in df.columns if len(
+            df[col].unique()) >= 2 or col == except_cols]
         self.columns_X = self.columns_Y.copy()
         self.columns_X.append(self.target)
         return df[self.columns_Y]
 
     def transform(self, df):
         return df[self.columns_X]
+
+#-------------------------------------------------------------------------------------------------
 
 
 class Preprocessings():
@@ -53,8 +60,8 @@ class Preprocessings():
 
         self.numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
 
-    def drop_cols(self, df):
-        return df.drop(self.colsToDrop, axis=1)
+    def drop_cols(self, df, cols):
+        return df.drop(cols, axis=1)
 
     def datetime_processings(self, df, format=None):
         # converting string dates in dateTime format :
@@ -80,8 +87,14 @@ class Preprocessings():
         And replacing -1 by the meadian value of each categorical column
         """
 
+        # non numeric columns to be encoded
         self.non_num_cols = df.select_dtypes(
             exclude=self.numerics).columns.difference(self.dateCols)
+
+        # numeric columns
+        self.num_cols = df.select_dtypes(include=self.numerics).columns
+
+        print(self.non_num_cols)
 
         df[self.non_num_cols] = df[self.non_num_cols].apply(
             lambda col: col.astype('category').cat.codes)
@@ -90,16 +103,55 @@ class Preprocessings():
 
         return df
 
-    def create_score(self, df, columns, score_name):
+    def create_score(self, df, columns, target, score_name):
         df_score = df.groupby(columns).mean().add_suffix('_mean').reset_index()
-        columns.append('VARIABLE_CIBLE_mean')
+        columns.append(target + '_mean')
         df_score = df_score[columns]
-        df_score = df_score.rename(columns={'VARIABLE_CIBLE_mean': score_name})
+        df_score = df_score.rename(columns={target + '_mean': score_name})
 
-        columns.remove('VARIABLE_CIBLE_mean')
+        columns.remove(target + '_mean')
         df = pd.merge(df, df_score, on=columns, how='left')
 
         return df
+
+    def reducing(self, df, cols=None):
+        """
+        reducing the continous features to a distribution with mean=0 std=1
+        """
+        if cols == None:
+            columns = self.num_cols
+        else:
+            columns = cols
+
+        df[columns] = (df[columns] - df[columns].mean()) / df[columns].std()
+
+        return df
+
+    def oneHot_encoder(self, df, except_cols=None):
+
+        to_encode = self.non_num_cols.tolist()
+        if except_cols != None:
+            to_encode.remove(except_cols)
+
+        print('drop', to_encode)
+
+        onehotencoder = OneHotEncoder(sparse=False)
+        temp = onehotencoder.fit_transform(df[to_encode].values)
+
+        cat_cols = []
+        for j in range(len(to_encode)):
+            for i in range(onehotencoder.feature_indices_[j + 1] - onehotencoder.feature_indices_[j]):
+                cat_cols.append(to_encode[j] + '_' + str(i))
+
+        df_temp = pd.DataFrame(temp, columns=cat_cols)
+
+        df = pd.concat([df, df_temp], axis=1, join='inner')
+        df = df.drop(to_encode, axis=1)
+
+        return df
+
+
+#--------------------------------------------------------------------------------------------------
 
 
 def re_split(df, target, split_value=None):
@@ -167,6 +219,8 @@ def data_split_scores(df, categorical_cols, print_results=10, numberOfSubgroups=
 class MultiLayerNN():
     """
     Class to build and train multilayer perceptron with TensorFlow
+    1-fold Cross Validation is performed while training, with the computation
+    of a score, to determine when to stop the training.
     """
 
     def __init__(self, architect=None, dropouts=None):
@@ -174,7 +228,7 @@ class MultiLayerNN():
         inputs :
 
         architect = [n_input, n_h1, ..., n_hn, n_output]
-        dropouts  = [True/False (n_h1), ..., True/False (n_hn)]
+        dropouts  = [True/False (n_h1), ..., True/False (n_hn)] : no dropouts on input or output layer
 
         """
         self.arch = architect
@@ -183,7 +237,7 @@ class MultiLayerNN():
         self.x = tf.placeholder("float", [None, self.arch[0]], name='x-input')
         self.y = tf.placeholder("float", [None, self.arch[-1]], name='y-input')
 
-        self.nl = len(self.arch) - 1
+        self.nl = len(self.arch) - 1  # number of hidden layers + output layer
         self.weights = [tf.Variable(tf.random_normal([self.arch[i], self.arch[i + 1]]))
                         for i in range(self.nl)]
         self.biases = [tf.Variable(tf.random_normal([self.arch[i + 1]])) for i in range(self.nl)]
@@ -197,6 +251,7 @@ class MultiLayerNN():
 
     def multilayer_perceptron(self, _X, _weights, _biases, _keep_prob):
 
+        # first hidden layer
         layers = [tf.nn.sigmoid(tf.add(tf.matmul(_X, _weights[0]), _biases[0]))]
 
         for i in range(self.nl - 1):
@@ -206,7 +261,7 @@ class MultiLayerNN():
             layers.append(tf.nn.sigmoid(
                 tf.add(tf.matmul(layers[-1], _weights[i + 1]), _biases[i + 1])))
 
-        print('num layers:', len(layers))
+        print('number of hidden layers:', len(layers) - 1)
         return layers[-1]
 
     def set_cost(self, cost_function='squared_error'):
@@ -235,7 +290,7 @@ class MultiLayerNN():
     def fit(self, x_train, y_train, x_test, y_test, learning_rate, sess,
             training_epochs=10000, tol=1e-4,
             checkpoint_steps=5, display_step=1,
-            cost_function='squared_error',
+            keep_prob=0.5, cost_function='squared_error',
             path="/home/maxime/projects/challengeMDI343/sumWriter/",
             model_path='/home/maxime/projects/challengeMDI343/tensorflow_models/model.ckpt'):
 
@@ -252,11 +307,11 @@ class MultiLayerNN():
         # Training cycle
         try:
             epoch = 0
-            while epoch <= training_epochs and self.roc_aucs[-1] - self.roc_aucs[-2] >= tol:
+            while epoch <= training_epochs and abs(self.roc_aucs[-1] - self.roc_aucs[-2]) >= tol:
 
                 # Fit training using train data
                 self.optimizer.run(
-                    feed_dict={self.x: x_train, self.y: y_train, self.keep_prob: 0.9})
+                    feed_dict={self.x: x_train, self.y: y_train, self.keep_prob: keep_prob})
 
                 # Compute loss
                 loss = self.cost.eval(
