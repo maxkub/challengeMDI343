@@ -1,6 +1,6 @@
 # challengeMDI343
 
-## The final preprocessing of the dataset 
+## Final preprocessing of the dataset:
 
 In that order:
 
@@ -42,10 +42,22 @@ To search for irrelvant features in the dataset.
 
 #### Separating the dataset into two subsets.
 When ploting histograms of each features, we see that some features have a very unbalanced distribution, for example: 'oecd_NB_BACKWARD_PL', 
-so the learning algorithm would see a lot of 0 for this feature and few other values. As a result it could hard to train the algorithm to
+so the learning algorithm would see a lot of 0 for this feature and few other values. As a result it could be hard to train the algorithm to
 use properly this feature. 
 
-The idea is then 
+The idea is then to look for a feature that could split the dataset in two subsets, under the constraints that:
+- The average "distance" between the subsets must be the largest.
+- The subsets must have approximately the same size (if one is too small, it is hard to train a good model on it). This can be measured via a two-class
+entropy. 
+- The overall distribution between the 4 categories ('VARIABLE_CIBLE'=0 or 1 in subset 1, and  'VARIABLE_CIBLE'=0 or 1 in subset 2) must be balanced.
+This can be measured via a 4-class entropy.
+
+I wrote the function data_split_scores() to give a score (which is the product of the three quantity described above) to each binary categorical variable,
+to find the best splitting variable. I only looked among binary variables at first and found good results, so I did not tried more complicated variables and split
+scores.
+
+The binary having the highest score is 'SOURCE_CITED_AGE', and when plotting the distribution of the features in each subset, we can see that the very unbalanced 
+distributions that we found in the whole dataset, are splited between the two subsets.
 
 ## les traitements qui n'ont pas eu d'impact
 
