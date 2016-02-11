@@ -4,24 +4,24 @@
 
 In that order:
 
-### separating the dataset into two subsets
+#### separating the dataset into two subsets
 
 The subset is seprated using the feature 'SOURCE_CITED_AGE' = 'IMPUT' or 'CALC'.
 Then each subset has its own preprocessing: the irrelevant features, the replacement of missing values with median values is different for each subset.
 
 
-### removing features pointed as irrelevant
+#### removing features pointed as irrelevant
 - The feature 'PRIORITY-MONTH' is removed: it is always the same date as 'BEGIN-MONTH' except when it has missing values.
 - After RFECV from sklearn, with a 3-folds cross-validation on each subset, more features are pointed as irrelevant.
 
-### dates
+#### dates
 The dates are not useful as such, I keep only the year because decision trees and random forest showed that it is the most important feature.
 I also created features describing the length (in days) beetween the three dates 'BEGIN-MONTH', 'FILING-MONTH', 'PUBLICATION-MONTH'.
 
-### categorical values
+#### categorical values
 Categorical values are encoded with label encoder from sklearn.
 
-### missing data
+#### missing data
 The missing data are filled with the median value for each feature. This is done separately for each subset.
 
 
