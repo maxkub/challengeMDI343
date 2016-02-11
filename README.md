@@ -1,30 +1,30 @@
 # challengeMDI343
 
-All the created functions are in the file 'utils'.
+All the created functions are in the file 'utils'. All scores are evluted with the roc_auc_score from sklearn.
 
-## Preprocessing of the dataset:
+## Preprocessing of the dataset
 
 This the preprocessing applyied to find the best score. The following opperations are applyied, in that order:
 
-#### - separating the dataset into two subsets
+#### 1. Separating the dataset into two subsets
 
 The subset is seprated using the feature 'SOURCE_CITED_AGE' = 'IMPUT' or 'CALC'.
 Then each subset has its own preprocessing: the irrelevant features, the replacement of missing values with median values is different for each subset.
 
 
-#### - removing features pointed as irrelevant
+#### 2. Removing features pointed as irrelevant
 - The feature 'PRIORITY-MONTH' is removed: it is always the same date as 'BEGIN-MONTH' except when it has missing values.
 - After RFECV from sklearn, with a 3-folds cross-validation on each subset, more features are pointed as irrelevant.
 
-#### - dates
+#### 3. Dates
 The dates are not useful as such, I keep only the year because decision trees and random forest showed that it is the most important feature.
 I also created features describing the length (in days) beetween the three dates 'BEGIN-MONTH', 'FILING-MONTH', 'PUBLICATION-MONTH'.
 The original datetime type features are removed.
 
-#### - categorical values
+#### 4. Categorical values
 Categorical values are encoded with label encoder from sklearn.
 
-#### - missing data
+#### 5. Missing data
 The missing data are filled with the median value for each feature. This is done separately for each subset.
 
 
@@ -41,11 +41,16 @@ but I did not try it with one-hot-encoder for the categorical variables...
 
 ## Steps that improved the score
 
-#### Simplifying the preprocessings
+#### Simplifying the preprocessings and the model
+
+This was, by far, the most efficient step to improve the score.
 
 I started with some complicated preprocessings, with a lot of new features coming from the one-hot-encoding although I removed the features
 containing many categories, and with some engineered features and scores. Even with a random forest with a gridsearchCV, I could not do better than
 a score of ~0.64.
+
+I was also working with a multilayer perceptron, I tested it from 1 layer with 2 neurons, up-to 3 layers with 150 neurons on each layers. It did not gave results above
+~0.67 (which was obtained with networks having 1 hidden layer with 15-20 neurons).
 
 So I started, to apply a more methodological method: apply very few preprocessings and test a good "off-the-shelf" algorithm (I tested with random forest).
 This becomes a benchmark model. Then try to beat the benchmark by testing one new preprocessing, if it works keep the preprocessing, if it does not
