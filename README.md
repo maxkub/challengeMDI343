@@ -1,6 +1,6 @@
 # challengeMDI343
 
-# The final preprocessing of the dataset 
+## The final preprocessing of the dataset 
 
 In that order:
 
@@ -25,7 +25,7 @@ Categorical values are encoded with label encoder from sklearn.
 The missing data are filled with the median value for each feature. This is done separately for each subset.
 
 
-# The tested algorithms
+## The tested algorithms
 
 - decision trees
   * Poor results, I used it essentially to try to find important variables in the decision, to create new features.
@@ -37,7 +37,7 @@ The missing data are filled with the median value for each feature. This is done
   * That was my second benchmark model, with poorly optimized hyperparameters.
 
 
-# Steps that improved the score
+## Steps that improved the score
 
 ### RFECV
 
