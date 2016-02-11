@@ -1,8 +1,10 @@
 # challengeMDI343
 
-## Final preprocessing of the dataset:
+All the created functions are in the file 'utils'.
 
-In that order:
+## Preprocessing of the dataset:
+
+This the preprocessing applyied to find the best score. The following opperations are applyied, in that order:
 
 #### - separating the dataset into two subsets
 
@@ -17,6 +19,7 @@ Then each subset has its own preprocessing: the irrelevant features, the replace
 #### - dates
 The dates are not useful as such, I keep only the year because decision trees and random forest showed that it is the most important feature.
 I also created features describing the length (in days) beetween the three dates 'BEGIN-MONTH', 'FILING-MONTH', 'PUBLICATION-MONTH'.
+The original datetime type features are removed.
 
 #### - categorical values
 Categorical values are encoded with label encoder from sklearn.
@@ -28,19 +31,33 @@ The missing data are filled with the median value for each feature. This is done
 ## The tested algorithms
 
 - decision trees: poor results, I used it essentially to try to find important variables in the decision, to create new features.
-- random forest: that gave results with a ROC_auc_score around 0.68. It was my first benchmark model.
-- multilayer perceptron with tensorflow. The code I have written to use this library is given in the module data_science. It did not give really good results, 
-but I did not try it with one-hot-encoder for the categorical variables...  
-- Xgboost: that was my second benchmark model, with poorly optimized hyperparameters.
+- logistic regression: very poor results...
+- random forest: that gave results with a ROC_auc_score around 0.69. It was my first benchmark model, with the preprocessings described above.
+- multilayer perceptron with tensorflow. The code I have written to use this library is given in the module data_science. It did not give better results than random forest, 
+but I did not try it with one-hot-encoder for the categorical variables...
+- Xgboost: that was my second benchmark model, although with poorly optimized hyperparameters, with the same preprocessings as above.
+- hyperopt + Xgboost.
 
 
 ## Steps that improved the score
 
+#### Simplifying the preprocessings
+
+I started with some complicated preprocessings, with a lot of new features coming from the one-hot-encoding although I removed the features
+containing many categories, and with some engineered features and scores. Even with a random forest with a gridsearchCV, I could not do better than
+a score of ~0.64.
+
+So I started, to apply a more methodological method: apply very few preprocessings and test a good "off-the-shelf" algorithm (I tested with random forest).
+This becomes a benchmark model. Then try to beat the benchmark by testing one new preprocessing, if it works keep the preprocessing, if it does not
+work try something else.
+ 
+
 #### RFECV
 
-To search for irrelvant features in the dataset.
+RFECV from sklearn was used to search for irrelvant features in the dataset.
 
-#### Separating the dataset into two subsets.
+#### Separating the dataset into two subsets
+
 When ploting histograms of each features, we see that some features have a very unbalanced distribution, for example: 'oecd_NB_BACKWARD_PL', 
 so the learning algorithm would see a lot of 0 for this feature and few other values. As a result it could be hard to train the algorithm to
 use properly this feature. 
@@ -59,7 +76,8 @@ scores.
 The binary having the highest score is 'SOURCE_CITED_AGE', and when plotting the distribution of the features in each subset, we can see that the very unbalanced 
 distributions that we found in the whole dataset, are splited between the two subsets.
 
-## les traitements qui n'ont pas eu d'impact
+#### Optimizing Xgboost model
 
-#### feature engineering 
+This was done using hyperopt, on each subset. The score improved from ~0.70 to ~0.71 .
+
 
