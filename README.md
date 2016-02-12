@@ -1,10 +1,10 @@
 # challengeMDI343
 
-  All the created functions are in the file 'utils'. All scores are evluted with the roc_auc_score from sklearn, on a cross validation subset of the data representing 20% of the whole dataset.
+  All the created functions are in the file 'utils'. All scores are evaluated with the roc_auc_score from sklearn, on a cross validation subset of the data representing 20% of the whole dataset.
 
 ### Preprocessing of the dataset
 
-  This the preprocessing applyied to find the best score. The following opperations are applyied, in that order:
+  This is the preprocessing applyied to find the best score. The following opperations are applyied, in that order:
 
 ##### 1. Separating the dataset into two subsets
 
@@ -41,12 +41,12 @@ but I did not try it with one-hot-encoder for the categorical variables...
 
 ### Steps that improved the score
 
-##### 1. Simplifying the preprocessings and the model
+##### 1. Simplifying the preprocessings and the model, then, building with a method
 
 This was, by far, the most efficient step to improve the score.
 
 I started with some complicated preprocessings, with a lot of new features coming from the one-hot-encoding although I removed the features
-containing many categories, and with some engineered features and scores. Even with a random forest with a gridsearchCV, I could not do better than
+containing many categories, and/or with some engineered features and scores. Even with a random forest with a gridsearchCV, I could not do better than
 a score of ~0.64.
 
 I was also working with a multilayer perceptron, I tested it from 1 layer with 2 neurons, up-to 3 layers with 150 neurons on each layers. It did not gave results above
