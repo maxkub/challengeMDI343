@@ -52,7 +52,9 @@ I was also working with a multilayer perceptron, I tested it from 1 layer with 2
 
 So I started, to apply a more methodological method: apply very few preprocessings and test a good "off-the-shelf" algorithm (I tested with random forest).
 This becomes a benchmark model. Then try to beat the benchmark by testing one new preprocessing, if it works keep the preprocessing, if it does not
-work try something else. 
+work try something else.
+
+![alt tag](https://raw.githubusercontent.com/maxkub/challengeMDI343/master/utils/off_the_shelf.png)
 
 
 ##### 2. RFECV
