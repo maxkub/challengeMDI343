@@ -1,6 +1,6 @@
 # challengeMDI343
 
-  All the created functions are in the file 'utils'. All scores are evluted with the roc_auc_score from sklearn.
+  All the created functions are in the file 'utils'. All scores are evluted with the roc_auc_score from sklearn, on a cross validation subset of the data representing 20% of the whole dataset.
 
 ### Preprocessing of the dataset
 
@@ -30,7 +30,7 @@ The missing data are filled with the median value for each feature. This is done
 
 ### The tested algorithms
 
-- **Decision trees:** poor results, I used it essentially to try to find important variables in the decision, to create new features.
+- **Decision trees:** very poor results, I used it essentially to try to find important variables in the decision, to create new features.
 - **Logistic regression:** very poor results...
 - **Random forest:** that gave results with a ROC_auc_score around 0.69. It was my first benchmark model, with the preprocessings described above.
 - **Multilayer perceptron** with tensorflow. The code I have written to use this library is given in the module data_science. It did not give better results than random forest, 
@@ -41,7 +41,7 @@ but I did not try it with one-hot-encoder for the categorical variables...
 
 ### Steps that improved the score
 
-##### Simplifying the preprocessings and the model
+##### 1. Simplifying the preprocessings and the model
 
 This was, by far, the most efficient step to improve the score.
 
@@ -57,11 +57,11 @@ This becomes a benchmark model. Then try to beat the benchmark by testing one ne
 work try something else.
  
 
-##### RFECV
+##### 2. RFECV
 
 RFECV from sklearn was used to search for irrelvant features in the dataset.
 
-##### Separating the dataset into two subsets
+##### 3. Separating the dataset into two subsets
 
 When ploting histograms of each features, we see that some features have a very unbalanced distribution, for example: 'oecd_NB_BACKWARD_PL', 
 so the learning algorithm would see a lot of 0 for this feature and few other values. As a result it could be hard to train the algorithm to
@@ -81,7 +81,7 @@ scores.
 The binary having the highest score is 'SOURCE_CITED_AGE', and when plotting the distribution of the features in each subset, we can see that the very unbalanced 
 distributions that we found in the whole dataset, are splited between the two subsets.
 
-##### Optimizing Xgboost model
+##### 4. Optimizing Xgboost model
 
 This was done using hyperopt, on each subset. The score improved from ~0.70 to ~0.71 .
 
