@@ -6,25 +6,25 @@ All the created functions are in the file 'utils'. All scores are evluted with t
 
 This the preprocessing applyied to find the best score. The following opperations are applyied, in that order:
 
-#### 1. Separating the dataset into two subsets
+##### 1. Separating the dataset into two subsets
 
 The subset is seprated using the feature 'SOURCE_CITED_AGE' = 'IMPUT' or 'CALC'.
 Then each subset has its own preprocessing: the irrelevant features, the replacement of missing values with median values is different for each subset.
 
 
-#### 2. Removing features pointed as irrelevant
+##### 2. Removing features pointed as irrelevant
 - The feature 'PRIORITY-MONTH' is removed: it is always the same date as 'BEGIN-MONTH' except when it has missing values.
 - After RFECV from sklearn, with a 3-folds cross-validation on each subset, more features are pointed as irrelevant.
 
-#### 3. Dates
+##### 3. Dates
 The dates are not useful as such, I keep only the year because decision trees and random forest showed that it is the most important feature.
 I also created features describing the length (in days) beetween the three dates 'BEGIN-MONTH', 'FILING-MONTH', 'PUBLICATION-MONTH'.
 The original datetime type features are removed.
 
-#### 4. Categorical values
+##### 4. Categorical values
 Categorical values are encoded with label encoder from sklearn.
 
-#### 5. Missing data
+##### 5. Missing data
 The missing data are filled with the median value for each feature. This is done separately for each subset.
 
 
@@ -41,7 +41,7 @@ but I did not try it with one-hot-encoder for the categorical variables...
 
 ### Steps that improved the score
 
-#### Simplifying the preprocessings and the model
+##### Simplifying the preprocessings and the model
 
 This was, by far, the most efficient step to improve the score.
 
@@ -57,11 +57,11 @@ This becomes a benchmark model. Then try to beat the benchmark by testing one ne
 work try something else.
  
 
-#### RFECV
+##### RFECV
 
 RFECV from sklearn was used to search for irrelvant features in the dataset.
 
-#### Separating the dataset into two subsets
+##### Separating the dataset into two subsets
 
 When ploting histograms of each features, we see that some features have a very unbalanced distribution, for example: 'oecd_NB_BACKWARD_PL', 
 so the learning algorithm would see a lot of 0 for this feature and few other values. As a result it could be hard to train the algorithm to
@@ -81,7 +81,7 @@ scores.
 The binary having the highest score is 'SOURCE_CITED_AGE', and when plotting the distribution of the features in each subset, we can see that the very unbalanced 
 distributions that we found in the whole dataset, are splited between the two subsets.
 
-#### Optimizing Xgboost model
+##### Optimizing Xgboost model
 
 This was done using hyperopt, on each subset. The score improved from ~0.70 to ~0.71 .
 
