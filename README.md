@@ -11,12 +11,12 @@ Then each subset has its own preprocessing: the irrelevant features, the replace
 
 
 ##### 2. Removing features pointed as irrelevant
-- The feature 'PRIORITY-MONTH' is removed: it is always the same date as 'BEGIN-MONTH' except when it has missing values.
+- The feature PRIORITY-MONTH is removed: it is always the same date as BEGIN-MONTH except when it has missing values.
 - After RFECV from sklearn, with a 3-folds cross-validation on each subset, more features are pointed as irrelevant.
 
 ##### 3. Dates
 The dates are not useful as such, I keep only the year because decision trees and random forest showed that it is the most important feature.
-I also created features describing the length (in days) between the three dates 'BEGIN-MONTH', 'FILING-MONTH', 'PUBLICATION-MONTH'.
+I also created features describing the length (in days) between the three dates BEGIN-MONTH, FILING-MONTH, PUBLICATION-MONTH.
 The original datetime type features are removed.
 
 ##### 4. Categorical values
@@ -52,7 +52,7 @@ I was also working with a multilayer perceptron, I tested it from 1 layer with 2
 
 So I started, to apply a more methodological method: apply very few preprocessings and test a good "off-the-shelf" algorithm (I tested with random forest).
 This becomes a benchmark model. Then try to beat the benchmark by testing one new preprocessing, if it works keep the preprocessing, if it does not
-work try something else.
+work try something else. 
 
 
 ##### 2. RFECV
