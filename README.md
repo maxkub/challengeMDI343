@@ -1,10 +1,10 @@
 # challengeMDI343
 
-All the created functions are in the file 'utils'. All scores are evluted with the roc_auc_score from sklearn.
+  All the created functions are in the file 'utils'. All scores are evluted with the roc_auc_score from sklearn.
 
 ### Preprocessing of the dataset
 
-This the preprocessing applyied to find the best score. The following opperations are applyied, in that order:
+  This the preprocessing applyied to find the best score. The following opperations are applyied, in that order:
 
 ##### 1. Separating the dataset into two subsets
 
