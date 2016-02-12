@@ -30,13 +30,13 @@ The missing data are filled with the median value for each feature. This is done
 
 ## The tested algorithms
 
-- decision trees: poor results, I used it essentially to try to find important variables in the decision, to create new features.
-- logistic regression: very poor results...
-- random forest: that gave results with a ROC_auc_score around 0.69. It was my first benchmark model, with the preprocessings described above.
-- multilayer perceptron with tensorflow. The code I have written to use this library is given in the module data_science. It did not give better results than random forest, 
+- **decision trees:** poor results, I used it essentially to try to find important variables in the decision, to create new features.
+- **logistic regression:** very poor results...
+- **random forest:** that gave results with a ROC_auc_score around 0.69. It was my first benchmark model, with the preprocessings described above.
+- **multilayer perceptron** with tensorflow. The code I have written to use this library is given in the module data_science. It did not give better results than random forest, 
 but I did not try it with one-hot-encoder for the categorical variables...
-- Xgboost: that was my second benchmark model, although with poorly optimized hyperparameters, with the same preprocessings as above.
-- hyperopt + Xgboost.
+- **Xgboost:** that was my second benchmark model, although with poorly optimized hyperparameters, with the same preprocessings as above.
+- **hyperopt** + Xgboost.
 
 
 ## Steps that improved the score
