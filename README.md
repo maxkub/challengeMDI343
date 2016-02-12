@@ -1,5 +1,6 @@
 # challengeMDI343
-All the created functions are in *utils/data_science.py*. All scores are evaluated with the roc_auc_score from sklearn, on a cross validation subset of the data representing 20% of the whole dataset.
+All the created functions are in [data_sciency.py](utils/data_science.py). All scores are evaluated with the roc_auc_score from [sklearn](http://scikit-learn.org/stable/),
+ on a cross validation subset of the data representing 20% of the whole dataset.
 
 ### Preprocessing of the dataset
 This is the preprocessing applied to find the best score. The following operations are applied, in that order:
@@ -31,8 +32,8 @@ The missing data are filled with the median value for each feature. This is done
 - **Decision trees:** very poor results, I used it essentially to try to find important variables in the decision, to create new features.
 - **Logistic regression:** very poor results...
 - **Random forest:** that gave results with a ROC_auc_score around 0.69. It was my first benchmark model, with the preprocessings described above.
-- **Multilayer perceptron** with tensorflow. The code I have written to use this library is given in the module data_science. It did not give better results than random forest,
-but I did not try it with one-hot-encoder for the categorical variables...
+- **Multilayer perceptron** with tensorflow. The code I have written to use this library is given in the module [data_sciency.py](utils/data_science.py).
+It did not give better results than random forest, but I did not try it with one-hot-encoder for the categorical variables...
 - **Xgboost:** that was my second benchmark model, although with poorly optimized hyperparameters, and with the same preprocessings as above.
 - **Hyperopt** + Xgboost: the best results.
 
@@ -54,7 +55,7 @@ So I started, to apply a more methodological method: apply very few preprocessin
 This becomes a benchmark model. Then try to beat the benchmark by testing one new preprocessing, if it works keep the preprocessing, if it does not
 work try something else.
 
-![alt tag](https://raw.githubusercontent.com/maxkub/challengeMDI343/master/utils/off_the_shelf.png)
+->![alt text From The Element of Statistical Learning (Hastie, Tibshirani, Friedman)](https://raw.githubusercontent.com/maxkub/challengeMDI343/master/utils/off_the_shelf.png)<-
 
 
 ##### 2. RFECV
@@ -77,11 +78,11 @@ entropy.
 - The overall distribution between the 4 categories (VARIABLE_CIBLE=0 or 1 in subset 1, and  VARIABLE_CIBLE=0 or 1 in subset 2) must be balanced.
 This can be measured via a 4-class entropy.
 
-I wrote the function *data_split_scores()* to give a score (which is the product of the three quantity described above) to each binary categorical variable,
+I wrote the function [data_split_scores()](utils/data_science.py) to give a score (which is the product of the three quantity described above) to each binary categorical variable,
 to find the best splitting variable. I only looked among binary variables at first and found good results, so I did not tried more complicated variables and split
 scores.
 
-The resulting sorted scores of the function *data_split_scores()*, are at the entry [63] in *archive/challenge2.ipynb*.
+The resulting sorted scores of the function  [data_split_scores()](utils/data_science.py), are at the entry [63] in  [challenge2.ipynb](archive/challenge2.ipynb).
 The binary having the highest score is SOURCE_CITED_AGE, ex-aequo with SOURCE_IDX_ORI because these two features are always equal.
 When plotting the distribution of the features in each subset, we can see that the very unbalanced
 distributions that we found in the whole dataset, are split between the two subsets.
