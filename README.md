@@ -55,7 +55,7 @@ So I started, to apply a more methodological method: apply very few preprocessin
 This becomes a benchmark model. Then try to beat the benchmark by testing one new preprocessing, if it works keep the preprocessing, if it does not
 work try something else.
 
-->![alt text From The Element of Statistical Learning (Hastie, Tibshirani, Friedman)](https://raw.githubusercontent.com/maxkub/challengeMDI343/master/utils/off_the_shelf.png)<-
+![From The Element of Statistical Learning (Hastie, Tibshirani, Friedman)](https://raw.githubusercontent.com/maxkub/challengeMDI343/master/utils/off_the_shelf.png)
 
 
 ##### 2. RFECV
